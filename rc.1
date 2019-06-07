@@ -782,8 +782,11 @@ or
 occur in an argument or command,
 .I rc
 looks at the
-argument as a pattern for matching against files.
-(Contrary to the behavior other shells exhibit,
+argument as a pattern for matching against filenames and expands the pattern
+to the list of matching ones. If the pattern does not match any file, it is left
+as is. That process is usually refered to as pathname expansion or filename
+generation.
+(Contrary to the behavior some other shells exhibit,
 .I rc
 will only perform pattern matching if a metacharacter occurs unquoted and
 literally in the input.
@@ -820,6 +823,19 @@ not the caret
 since the caret already means
 something else in
 .IR rc .
+.PP
+Like in other Unix shell, but unlike Plan 9
+.IR rc ,
+When doing pathname expansion, filenames that start with a dot
+.Rc ( . )
+are only considered if the pattern (or the corresponding directory component of
+the pattern) itself starts with a literal dot. In any case, like in plan9 
+(and some but not all Unix shells), the
+.Cr "."
+and
+.Cr ".."
+special directories are never included, even on systems where they
+are included in directory listings.
 .PP
 .I rc
 also matches patterns against strings with the

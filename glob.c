@@ -126,7 +126,11 @@ static List *dmatch(char *d, char *p, char *m) {
 		return NULL;
 	}
 	while ((dp = readdir(dirp)) != NULL)
-		if ((*dp->d_name != '.' || *p == '.') && match(p, m, dp->d_name)) { /* match ^. explicitly */
+		if (!(dp->d_name[0] == '.' && (
+			p[0] != '.' || /* hidden files need to be matched explicitly */
+			dp->d_name[1] == '\0' || /* never include . */
+			(dp->d_name[1] == '.' && dp->d_name[2] == '\0') /* nor .. */
+			)) && match(p, m, dp->d_name)) {
 			matched = TRUE;
 			if (top == NULL)
 				top = r = nnew(List);
