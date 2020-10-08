@@ -88,6 +88,7 @@ quitopts:
 	inithash();
 	initparse();
 	assigndefault("ifs", " ", "\t", "\n", (void *)0);
+	assigndefault("ofs", " ", (void *)0);
 	assigndefault("nl", "\n", (void *)0);
 #ifdef DEFAULTPATH
 	assigndefault("path", DEFAULTPATH, (void *)0);

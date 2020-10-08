@@ -113,19 +113,28 @@ extern List *varsub(List *var, List *subs) {
 }
 
 extern List *flatten(List *s) {
-	List *r;
-	size_t step;
-	char *f;
+	List *r, *p, *ofs;
+	size_t size, step, sl;
+	char *sep, *f;
 	if (s == NULL || s->n == NULL)
 		return s;
+	ofs = varlookup("ofs");
+	if (ofs != NULL && ofs->w != NULL)
+		sep = ofs->w;
+	else
+		sep = " ";
+	sl = strlen(sep);
+	for (size = 0, p = s; p != NULL; p = p->n)
+		size += strlen(p->w) + (p->n == NULL ? 0 : sl);
 	r = nnew(List);
-	f = r->w = nalloc(listlen(s) + 1);
+	f = r->w = nalloc(size + 1);
 	r->m = NULL; /* flattened lists come from variables, so no meta */
 	r->n = NULL;
 	strcpy(f, s->w);
 	f += strlen(s->w);
 	do {
-		*f++ = ' ';
+		memcpy(f, sep, sl);
+		f += sl;
 		s = s->n;
 		step = strlen(s->w);
 		memcpy(f, s->w, step);
