@@ -229,11 +229,6 @@ extern void initenv(char **envp) {
 		}
 }
 
-static char *neverexport[] = {
-	"apid", "apids", "bqstatus", "cdpath", "home",
-	"ifs", "path", "pid", "ppid", "status", "*"
-};
-
 /* for a few variables that have default values, we export them only
 if they've been explicitly set; maybeexport[n].flag is TRUE if this
 has occurred. */
@@ -255,11 +250,12 @@ void set_exportable(char *s, bool b) {
 
 static bool var_exportable(char *s) {
 	int i;
-	for (i = 0; i < arraysize(neverexport); i++)
-		if (streq(s, neverexport[i]))
-			return FALSE;
+	List *noex;
 	for (i = 0; i < arraysize(maybeexport); i++)
 		if (maybeexport[i].flag == FALSE && streq(s, maybeexport[i].name))
+			return FALSE;
+	for (noex = varlookup("noexport"); noex != NULL; noex = noex->n)
+		if (streq(s, noex->w))
 			return FALSE;
 	return TRUE;
 }
