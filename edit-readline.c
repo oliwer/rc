@@ -306,6 +306,13 @@ char *edit_alloc(void *cookie, size_t *count) {
 	oldint = sys_signal(SIGINT, edit_catcher);
 	oldquit = sys_signal(SIGQUIT, edit_catcher);
 
+	/* <cks>: modern vipw changes the terminal foreground process
+	 * group and libreadline itself doesn't reset it. So
+	 * force-reset it, as is done (in input.c) for non-readline
+	 * input. We reset fd 0 because that's what readline is about
+	 * to read from.
+	 */
+	(void) makesamepgrp(0);
 	rl_reset_screen_size();
 	c->buffer = readline(prompt);
 
