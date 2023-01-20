@@ -124,6 +124,7 @@ distclean: clean
 install: all
 	@echo "INSTALL bin/rc"
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	unlink $(DESTDIR)$(PREFIX)/bin/rc
 	cp rc $(DESTDIR)$(PREFIX)/bin/
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/rc
 	@echo "INSTALL rc.1"
