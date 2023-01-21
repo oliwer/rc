@@ -103,7 +103,7 @@ quitopts:
 		(void *)0 );
 	assigndefault("noexport",
 		"noexport", "apid", "apids", "bqstatus", "cdpath", "home",
-		"ifs", "path", "pid", "ppid", "status", "*", (void *)0);
+		"ifs", "ofs", "path", "pid", "ppid", "status", "*", (void *)0);
 	initenv(envp);
 	initinput();
 	null[0] = NULL;
