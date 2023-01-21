@@ -1175,12 +1175,16 @@ This returns a single-element list, with the number of elements in
 .Cr $var .
 .SS "Flat Lists"
 In order to create a single-element list from a multi-element list,
-with the components space-separated, use the dollar-caret
+use the dollar-caret
 .Rc ( $^ )
 operator:
 .Ds
 .Cr $^var
 .De
+.PP
+Each component will be separated by the value of
+.Cr $ofs ,
+which defaults to a space character.
 .PP
 This is useful when the normal list concatenation rules need to be
 bypassed.
@@ -1418,7 +1422,7 @@ if
 .I rc
 has been started up as a login shell.
 .TP
-.Cr ifs " (default)"
+.Cr ifs " (default no-export)"
 The internal field separator, used for splitting up the output of
 backquote commands for digestion as a list. On startup,
 .I rc
@@ -1429,6 +1433,24 @@ assigns the list containing the characters space, tab, and newline to
 Contains the newline character (see
 .BR "Backquote substitution"
 above).
+.TP
+.Cr noexport " (default no-export)"
+All the variables references in
+.Cr $noexport
+are never exported to the environment. All the variables in this
+manual marked as "no-export" are included by default. While you
+can add new variables to the list, you should not abuse it.
+Create local variables instead.
+.TP
+.Cr ofs " (default)"
+The output field separator, used for joining the members of
+a list into a single string. See
+.Cr $^
+and
+.Cr $" .
+Only the first member of
+.Cr $ofs
+is taken in account.
 .TP
 .Cr path " (alias)"
 This is a list of directories to search in for commands.
@@ -1447,6 +1469,12 @@ The default is
 On startup,
 .Cr $pid
 is initialized to the numeric process ID of the currently running
+.IR rc .
+.TP
+.Cr ppid " (default no-export)"
+On startup,
+.Cr $ppid
+is initialized to the numeric process ID of the parent process of
 .IR rc .
 .TP
 .Cr prompt " (default)"
@@ -1981,7 +2009,9 @@ prints
 .PP
 The
 .Cr $^var
-operator flattens a list by separating each element with a space.
+operator flattens a list by separating each element with a space,
+or a custom separator as defined in
+.Cr $ofs .
 This function allows the separator to be an arbitrary string.
 .Ds
 .Cr "fn lflat {"
