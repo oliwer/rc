@@ -54,7 +54,7 @@
 #define HAVE_LSTAT 1
 
 /* Define to 1 if you have the `mkfifo' function. */
-/* #undef HAVE_MKFIFO */
+#define HAVE_MKFIFO 1
 
 /* Define to 1 if you have the `setpgrp' function. */
 #define HAVE_SETPGRP 1
