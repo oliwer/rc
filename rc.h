@@ -211,7 +211,7 @@ extern char *get_name(char *);
 extern List *parse_var(char *);
 extern Node *parse_fn(char *);
 extern void initprint(void);
-extern void rc_exit(int); /* here for odd reasons; user-defined signal handlers are kept in fn.c */
+extern void rc_exit(int) __dead; /* here for odd reasons; user-defined signal handlers are kept in fn.c */
 
 /* getopt.c */
 extern int rc_getopt(int, char **, char *);
@@ -387,7 +387,7 @@ extern int n2u(char *, unsigned int);
 extern int mvfd(int, int);
 extern int starstrcmp(const void *, const void *);
 extern void pr_error(char *, int);
-extern void panic(char *);
+extern void panic(char *) __dead;
 extern void uerror(char *);
 
 /* wait.c */

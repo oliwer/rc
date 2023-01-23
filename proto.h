@@ -98,3 +98,11 @@ extern char *sys_errlist[];
 #ifdef host_mips
 extern int errno;
 #endif
+
+#ifndef __dead
+#if __GNUC__ || __clang__
+#define __dead __attribute__((__noreturn__))
+#else
+#define __dead
+#endif
+#endif /* __dead */
