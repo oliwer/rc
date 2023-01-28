@@ -196,8 +196,13 @@ extern void alias(char *name, List *s, bool stack) {
 		varassign, varassign, colonassign, listassign, colonassign, listassign
 	};
 	int i = hasalias(name);
-	if (i != -1)
+	if (i != -1) {
 		(*vectors[i])(aliases[i^1], s, stack); /* xor hack to reverse case of alias entry */
+		if (i == 2 || i == 3) { // $path or $PATH
+			/* Invalidate the commands cache. */
+			reset_cmdtab();
+		}
+	}
 }
 
 extern void prettyprint_var(int fd, char *name, List *s) {

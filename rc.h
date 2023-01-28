@@ -161,6 +161,7 @@ enum {
 #define ecpy(x) strcpy((char *) ealloc(strlen(x) + 1), x)
 #define lookup_fn(s) ((rc_Function *) lookup(s, fp))
 #define lookup_var(s) ((Variable *) lookup(s, vp))
+#define lookup_cmd(s) ((char *) lookup(s, cp))
 #define nnew(x) ((x *) nalloc(sizeof(x)))
 #define ncpy(x) (strcpy((char *) nalloc(strlen(x) + 1), x))
 #ifndef offsetof
@@ -234,13 +235,14 @@ extern List *varsub(List *, List *);
 extern List *word(char *, char *);
 
 /* hash.c */
-extern Htab *fp, *vp;
+extern Htab *fp, *vp, *cp;
 extern void *lookup(char *, Htab *);
 extern rc_Function *get_fn_place(char *);
 extern List *varlookup(char *);
 extern Node *fnlookup(char *);
 extern Variable *get_var_place(char *, bool);
 extern bool varassign_string(char *);
+extern void set_cmd_path(char *, char *);
 extern char **makeenv(void);
 extern char *fnlookup_string(char *);
 extern char *varlookup_string(char *);
@@ -248,6 +250,8 @@ extern void alias(char *, List *, bool);
 extern void starassign(char *, char **, bool);
 extern void delete_fn(char *);
 extern void delete_var(char *, bool);
+extern void delete_cmd(char *);
+extern void reset_cmdtab(void);
 extern void fnassign(char *, Node *);
 extern void fnassign_string(char *);
 extern void fnrm(char *);
@@ -405,3 +409,4 @@ extern bool cond;
 /* which.c */
 extern bool rc_access(char *, bool, struct stat *);
 extern char *which(char *, bool);
+extern void verify_cmd(char *);

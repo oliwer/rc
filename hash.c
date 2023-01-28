@@ -17,9 +17,10 @@ static int hash(char *, int);
 static int find(char *, Htab *, int);
 static void free_fn(rc_Function *);
 
-Htab *fp;
-Htab *vp;
-static int fused, fsize, vused, vsize;
+Htab *fp; /* functions */
+Htab *vp; /* variables */
+Htab *cp; /* commands in $path */
+static int fused, fsize, vused, vsize, cused, csize;
 static char **env;
 static int bozosize;
 static int envsize;
@@ -29,14 +30,15 @@ static char *dead = "";
 #define HASHSIZE 64 /* rc was debugged with HASHSIZE == 2; 64 is about right for normal use */
 
 extern void inithash() {
-	Htab *fpp, *vpp;
+	Htab *fpp, *vpp, *cpp;
 	int i;
 	fp = ealloc(sizeof(Htab) * HASHSIZE);
 	vp = ealloc(sizeof(Htab) * HASHSIZE);
-	fused = vused = 0;
-	fsize = vsize = HASHSIZE;
-	for (vpp = vp, fpp = fp, i = 0; i < HASHSIZE; i++, vpp++, fpp++)
-		vpp->name = fpp->name = NULL;
+	cp = ealloc(sizeof(Htab) * HASHSIZE);
+	fused = vused = cused = 0;
+	fsize = vsize = csize = HASHSIZE;
+	for (vpp = vp, fpp = fp, cpp = cp, i = 0; i < HASHSIZE; i++, vpp++, fpp++, cpp++)
+		vpp->name = fpp->name = cpp->name = NULL;
 }
 
 #define ADV()   {if ((c = *s++) == '\0') break;}
@@ -68,10 +70,14 @@ static bool rehash(Htab *ht) {
 		if (fsize > 2 * fused)
 			return FALSE;
 		size = fsize;
-	} else {
+	} else if (ht == vp) {
 		if (vsize > 2 * vused)
 			return FALSE;
 		size = vsize;
+	} else {
+		if (csize > 2 * cused)
+			return FALSE;
+		size = csize;
 	}
 	newsize = 2 * size;
 	newhtab = ealloc(newsize * sizeof(Htab));
@@ -92,10 +98,14 @@ static bool rehash(Htab *ht) {
 		fused = newused;
 		fp = newhtab;
 		fsize = newsize;
-	} else {
+	} else if (ht == vp) {
 		vused = newused;
 		vp = newhtab;
 		vsize = newsize;
+	} else {
+		cused = newused;
+		cp = newhtab;
+		csize = newsize;
 	}
 	efree(ht);
 	return TRUE;
@@ -103,6 +113,7 @@ static bool rehash(Htab *ht) {
 
 #define varfind(s) find(s, vp, vsize)
 #define fnfind(s) find(s, fp, fsize)
+#define cmdfind(s) find(s, cp, csize)
 
 static int find(char *s, Htab *ht, int size) {
 	int h = hash(s, size);
@@ -114,7 +125,7 @@ static int find(char *s, Htab *ht, int size) {
 }
 
 extern void *lookup(char *s, Htab *ht) {
-	int h = find(s, ht, ht == fp ? fsize : vsize);
+	int h = find(s, ht, ht == fp ? fsize : ht == vp ? vsize : csize);
 	return (ht[h].name == NULL) ? NULL : ht[h].p;
 }
 
@@ -158,6 +169,20 @@ extern Variable *get_var_place(char *s, bool stack) {
 			return new;
 		}
 	}
+}
+
+/* Upsert the path associated to a command. We do not make a copy of
+   the path string, but simply copy its pointer. Because of this,
+   the whole table must be reset when $path is modified. */
+extern void set_cmd_path(char *cmd, char *path) {
+	int h = cmdfind(cmd);
+	if (fp[h].name == NULL) {
+		if (rehash(cp))
+			h = cmdfind(cmd);
+		cused++;
+		cp[h].name = ecpy(cmd);
+	}
+	cp[h].p = path;
 }
 
 extern void delete_fn(char *s) {
@@ -204,6 +229,34 @@ extern void delete_var(char *s, bool stack) {
 			vp[h].name = dead;
 		}
 	}
+}
+
+extern void delete_cmd(char *s) {
+	int h = cmdfind(s);
+	if (cp[h].name == NULL)
+		return; /* not found */
+	efree(cp[h].p);
+	if (cp[(h+1)&(csize-1)].name == NULL) {
+		--fused;
+		cp[h].name = NULL;
+	} else {
+		cp[h].name = dead;
+	}
+}
+
+extern void reset_cmdtab() {
+	Htab *cpp;
+	int i;
+
+	if (cused == 0)
+		return;
+
+	for (cpp = cp, i = 0; i < csize; i++, cpp++) {
+		efree(cpp->name);
+		cpp->name = NULL;
+	}
+	
+	cused = 0;
 }
 
 static void free_fn(rc_Function *f) {

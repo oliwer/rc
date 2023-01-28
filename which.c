@@ -83,14 +83,37 @@ static char *protect(char *in) {
 	return out;
 }
 
+static char *join(char *path, char *cmd) {
+	static char *buf = NULL;
+	static size_t cap = 0;
+	size_t need, end, pathlen, cmdlen;
+	
+	pathlen = strlen(path), cmdlen = strlen(cmd);
+	need = pathlen + cmdlen + 2; /* one for null terminator, one for the '/' */
+	if (cap < need) {
+		if (need < 32) need = 32;
+		buf = erealloc(buf, (cap = need));
+	}
+	if (*path == '\0') {
+		memcpy(buf, cmd, cmdlen+1);
+	} else {
+		memcpy(buf, path, pathlen+1);
+		end = pathlen - 1;
+		if (buf[end] != '/' ) /* "//" is special to POSIX */
+			buf[++end] = '/';
+		memcpy(buf+end+1, cmd, cmdlen+1);
+	}
+
+	return buf;
+}
+
 /* return a full pathname by searching $path, and by checking the status of the file */
 
 extern char *which(char *name, bool verbose) {
-	static char *test = NULL;
-	static size_t testlen = 0;
 	List *path;
-	int len;
+	char *cached, *full;
 	struct stat st;
+
 	if (name == NULL)	/* no filename? can happen with "> foo" as a command */
 		return NULL;
 	if (!initialized) {
@@ -115,23 +138,14 @@ extern char *which(char *name, bool verbose) {
 	}
 	if (isabsolute(name)) /* absolute pathname? */
 		return rc_access(name, verbose, &st) ? name : NULL;
-	len = strlen(name);
+	if ((cached = lookup_cmd(name)) != NULL) /* command has already been cached? */
+		return join(cached, name);
 	for (path = varlookup("path"); path != NULL; path = path->n) {
-		size_t need = strlen(path->w) + len + 2; /* one for null terminator, one for the '/' */
-		if (testlen < need) {
-			efree(test);
-			test = ealloc(testlen = need);
+		full = join(path->w, name);
+		if (rc_access(full, FALSE, &st)) {
+			set_cmd_path(name, path->w); /* cache the path for this command */
+			return full;
 		}
-		if (*path->w == '\0') {
-			strcpy(test, name);
-		} else {
-			strcpy(test, path->w);
-			if (!streq(test, "/")) /* "//" is special to POSIX */
-				strcat(test, "/");
-			strcat(test, name);
-		}
-		if (rc_access(test, FALSE, &st))
-			return test;
 	}
 	if (verbose) {
 		char *n = protect(name);
@@ -139,4 +153,17 @@ extern char *which(char *name, bool verbose) {
 		efree(n);
 	}
 	return NULL;
+}
+
+/* Remove a command from the cache if it is no longer executable. */
+extern void verify_cmd(char *fullpath) {
+	struct stat st;
+	char *cmd;
+
+	if (rc_access(fullpath, FALSE, &st))
+		return;
+	
+	cmd = strrchr(fullpath, '/');
+	if (cmd != NULL && *++cmd != '\0')
+		delete_cmd(cmd);
 }

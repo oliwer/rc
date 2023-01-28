@@ -736,3 +736,22 @@ submatch 'flag xx' 'usage: flag f [ + | - ]' 'flag wrong first arg'
 submatch 'flag x x' 'usage: flag f [ + | - ]' 'flag wrong second arg'
 submatch 'flag c && echo yes' yes 'flag c'
 submatch 'flag x +; flag x -' 'flag x -' 'setting x flag'
+
+# Test the command cache
+if (mkdir mybins) {
+	path = (. `pwd^/mybins $path) {
+		echo > mytrue
+		chmod +x mytrue
+		mytrue  # this should add mytrue to the cache
+		mv mytrue mybins/mytrue
+		mytrue  # should fail and trigger cache removal
+		if (! mytrue) {
+			rm -r mybins
+			fail cache invalidation did not work as expected
+		} else {
+			rm -r mybins
+		}
+	}
+} else {
+	echo >[1=2] skipped command cache tests: . is not writable
+}

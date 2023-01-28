@@ -134,5 +134,9 @@ extern void exec(List *s, bool parent) {
 		sigchk();
 		nl_on_intr = TRUE;
 		pop_cmdarg(TRUE);
+
+		/* Check if this command needs to be removed from the cache.*/
+		if (path != NULL && stat != 0)
+			verify_cmd(path);
 	}
 }
