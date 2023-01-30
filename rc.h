@@ -292,6 +292,7 @@ extern bool match(char *, char *, char *);
 
 /* alloc.c */
 extern void *ealloc(size_t);
+extern void *ecalloc(size_t, size_t);
 extern void *erealloc(void *, size_t);
 extern void efree(void *);
 extern Block *newblock(void);

@@ -123,6 +123,17 @@ extern void *ealloc(size_t n) {
 	return p;
 }
 
+extern void *ecalloc(size_t nelem, size_t size) {
+	void *p;
+
+	assert(nelem && size);
+	if ((p = calloc(nelem, size)) == NULL) {
+		uerror("calloc");
+		rc_exit(1);
+	}
+	return p;
+}
+
 extern void *erealloc(void *p, size_t n) {
 	if (p == NULL)		/* erealloc() has POSIX realloc() semantics */
 		return ealloc(n);

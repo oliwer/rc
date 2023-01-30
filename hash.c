@@ -30,15 +30,11 @@ static char *dead = "";
 #define HASHSIZE 64 /* rc was debugged with HASHSIZE == 2; 64 is about right for normal use */
 
 extern void inithash() {
-	Htab *fpp, *vpp, *cpp;
-	int i;
-	fp = ealloc(sizeof(Htab) * HASHSIZE);
-	vp = ealloc(sizeof(Htab) * HASHSIZE);
-	cp = ealloc(sizeof(Htab) * HASHSIZE);
+	fp = ecalloc(HASHSIZE, sizeof(Htab));
+	vp = ecalloc(HASHSIZE, sizeof(Htab));
+	cp = ecalloc(HASHSIZE, sizeof(Htab));
 	fused = vused = cused = 0;
 	fsize = vsize = csize = HASHSIZE;
-	for (vpp = vp, fpp = fp, cpp = cp, i = 0; i < HASHSIZE; i++, vpp++, fpp++, cpp++)
-		vpp->name = fpp->name = cpp->name = NULL;
 }
 
 #define ADV()   {if ((c = *s++) == '\0') break;}
@@ -80,7 +76,7 @@ static bool rehash(Htab *ht) {
 		size = csize;
 	}
 	newsize = 2 * size;
-	newhtab = ealloc(newsize * sizeof(Htab));
+	newhtab = ecalloc(newsize, sizeof(Htab));
 	for (i = 0; i < newsize; i++)
 		newhtab[i].name = NULL;
 	for (i = newused = 0; i < size; i++)
@@ -271,7 +267,8 @@ extern void initenv(char **envp) {
 	n++; /* one for the null terminator */
 	if (n < HASHSIZE)
 		n = HASHSIZE;
-	env = ealloc((envsize = 2 * n) * sizeof (char *));
+	envsize = 2 * n;
+	env = ecalloc(envsize, sizeof(char *));
 	for (; *envp != NULL; envp++)
 		if (strncmp(*envp, "fn_", conststrlen("fn_")) == 0) {
 			if (!dashpee)

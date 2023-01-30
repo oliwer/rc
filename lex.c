@@ -361,9 +361,7 @@ extern void inityy() {
 	hq = NULL;
 	/* return memory to the system if the buffer got too large */
 	if (bufsize > BUFMAX && realbuf != NULL) {
-		efree(realbuf);
-		bufsize = BUFSIZE;
-		realbuf = ealloc(bufsize);
+		realbuf = erealloc(realbuf, (bufsize = BUFSIZE));
 	} else if (realbuf == NULL)
 		realbuf = ealloc(bufsize);
 }

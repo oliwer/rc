@@ -54,6 +54,7 @@ extern void *memset(void *, int, size_t);
 extern void exit(int);
 extern void free(void *);
 extern void *malloc(size_t);
+extern void *calloc(size_t, size_t);
 extern void *realloc(void *, size_t);
 extern void qsort(void *, size_t, size_t, int (*)(const void *, const void *));
 

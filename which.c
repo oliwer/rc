@@ -131,7 +131,7 @@ extern char *which(char *name, bool verbose) {
 		ngroups = NGROUPS;
 #endif
 		if (ngroups) {	
-			gidset = ealloc(ngroups * sizeof(GETGROUPS_T));
+			gidset = ecalloc((size_t)ngroups, sizeof(GETGROUPS_T));
 			getgroups(ngroups, gidset);
 		}
 #endif
