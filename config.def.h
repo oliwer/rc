@@ -4,8 +4,11 @@
 /* Define to the default path used if $PATH is empty when rc starts. */
 #define DEFAULTPATH "/usr/local/bin","/usr/bin","/bin"
 
-/* Define if your kernel has SysV special SIGCLD semantics. */
-#define HAVE_SYSV_SIGCLD 1
+/* Define if your kernel supports `#!' magic numbers */
+#define HASH_BANG 1
+
+/* Define if system calls automatically restart after interruption by signal */
+/* undef HAVE_RESTARTABLE_SYSCALLS */
 
 /* Define if you have /dev/fd. */
 #define HAVE_DEV_FD 1
@@ -71,18 +74,6 @@
 /* Define to 1 if you have the `sigaction' function. */
 #define HAVE_SIGACTION 1
 
-/* Define to 1 if you have the <stdint.h> header file. */
-#define HAVE_STDINT_H 1
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#define HAVE_STDLIB_H 1
-
-/* Define to 1 if you have the <strings.h> header file. */
-#define HAVE_STRINGS_H 1
-
-/* Define to 1 if you have the <string.h> header file. */
-#define HAVE_STRING_H 1
-
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'. */
 #define HAVE_DIRENT_H 1
 
@@ -97,12 +88,6 @@
 
 /* Define to 1 if you have the <sys/resource.h> header file. */
 #define HAVE_SYS_RESOURCE_H 1
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#define HAVE_SYS_STAT_H 1
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
