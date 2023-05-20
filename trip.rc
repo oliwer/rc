@@ -475,7 +475,8 @@ fn_ff='{' prompt='' if (!~ `` $nl {$rc -cff>[2=1]} 'rc: line 1: '*' error near e
 
 $rc -c 'exit 0 sigfpe' && fail exit of bad pipeline is true
 
-submatch 'exit foo' 'bad status' 'exit diagnostic'
+$rc -c 'exit foo'
+~ $status 1 || fail '"exit foo" should exit with status 1'
 
 #
 # control structures

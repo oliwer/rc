@@ -188,9 +188,8 @@ extern void ssetstatus(char **av) {
 			}
 		}
 		if (!found) {
-			fprint(2, "bad status\n");
-			set(FALSE);
-			return;
+			/* accept arbitrary strings for Plan 9 rc compat. */
+			statuses[l - i] = 1 << 8;
 		}
 	}
 	pipelength = i;
