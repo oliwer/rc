@@ -1794,6 +1794,11 @@ Without argument, the current value of
 .Cr $status
 is used.
 .TP
+.B false
+Set
+.IR $status
+to 1. Arguments are ignored.
+.TP
 \fBflag\fR \fIf\fR [ \fB+\fR | \fB\-\fR ]
 Test, set (\fB+\fR), or reset (\fB\-\fR) command-line flag
 .IR f .
@@ -1904,6 +1909,11 @@ elements down by
 .IR n .
 .I n
 defaults to 1.
+.TP
+.B true
+Set
+.IR $status
+to 0. Arguments are ignored.
 .TP
 \fBumask \fR[\fImask\fR]
 Sets the current umask (see

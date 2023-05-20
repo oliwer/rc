@@ -20,9 +20,10 @@
 #include "rlimit.h"
 #include "sigmsgs.h"
 
-static void b_break(char **), b_cd(char **), b_continue(char **), b_eval(char **), b_flag(char **),
-	b_exit(char **), b_newpgrp(char **), b_return(char **), b_shift(char **), b_umask(char **),
-	b_wait(char **), b_whatis(char **);
+static void b_break(char **), b_cd(char **), b_continue(char **), b_eval(char **),
+  b_false(char **), b_flag(char **), b_exit(char **), b_newpgrp(char **),
+  b_return(char **), b_shift(char **), b_true(char **), b_umask(char **),
+  b_wait(char **), b_whatis(char **);
 
 #if HAVE_SETRLIMIT
 static void b_limit(char **);
@@ -46,6 +47,7 @@ static struct {
 	{ b_eval,	"eval" },
 	{ b_exec,	"exec" },
 	{ b_exit,	"exit" },
+	{ b_false,	"false" },
 	{ b_flag,	"flag" },
 #if HAVE_SETRLIMIT
 	{ b_limit,	"limit" },
@@ -53,6 +55,7 @@ static struct {
 	{ b_newpgrp,	"newpgrp" },
 	{ b_return,	"return" },
 	{ b_shift,	"shift" },
+	{ b_true,	"true" },
 	{ b_umask,	"umask" },
 	{ b_wait,	"wait" },
 	{ b_whatis,	"whatis" },
@@ -327,6 +330,17 @@ static void b_shift(char **av) {
 /* dud function */
 
 extern void b_builtin(char **ignore) {
+}
+
+/* true & false, the closest thing we have to booleans */
+
+static void b_false(char **av) {
+	(void)av;
+	set(FALSE);
+}
+static void b_true(char **av) {
+	(void)av;
+	set(TRUE);
 }
 
 /* wait for one or more processes, or all outstanding processes */
