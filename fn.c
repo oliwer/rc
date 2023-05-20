@@ -105,7 +105,7 @@ extern void setsigdefaults(bool sysvbackground) {
 
 /* rc's exit. if runexit is set, run the sigexit function. */
 
-extern void rc_exit(int stat) {
+extern void __dead rc_exit(int stat) {
 	if (runexit) {
 		char *sig[2];
 		sig[0] = "sigexit";

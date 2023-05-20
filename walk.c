@@ -103,7 +103,7 @@ top:	sigchk();
 			true_cmd = true_cmd->u[0].p;
 		}
 		cond = TRUE;
-		if_this = walk(n->u[0].p, TRUE);
+		if_this = walk(n->u[0].p, TRUE) ? if_true : if_false;
 		cond = oldcond;
 		if (if_last == if_nothing) if_last = if_this;
 		walk(if_this ? true_cmd : false_cmd, parent);

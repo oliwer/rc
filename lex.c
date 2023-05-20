@@ -258,6 +258,7 @@ top:	while ((c = gchar()) == ' ' || c == '\t')
 	case ')':
 	case '{': case '}':
 		w = NW;
+                /* FALLTHROUGH */
 	case '=':
 		return c;
 	case '&':

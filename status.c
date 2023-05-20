@@ -68,7 +68,7 @@ extern void setwaitstatus(char **av, char *cmd) {
 		;
 	
 	/* ensure we have enough space to store all the results */
-	if (count >= sizeof(statuses)) {
+	if (count >= (int)sizeof(statuses)) {
 		fprint(2, RC "too many arguments to %s\n", cmd);
 		set(FALSE);
 		return;

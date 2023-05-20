@@ -53,7 +53,7 @@ BINS = history mksignal mkstatval tripping
 
 all: rc
 
-.PHONY: all check clean distclean install trip
+.PHONY: all analyze check clean distclean install trip
 .SUFFIXES:
 .SUFFIXES: .c .o .y
 $(V).SILENT:
@@ -61,6 +61,9 @@ $(V).SILENT:
 rc: $(OBJS)
 	@echo "LINK $@"
 	$(CC) $(ALL_LDFLAGS) $(ALL_CFLAGS) -o $@ $(OBJS) $(LDLIBS)
+
+analyze:
+	$(MAKE) CFLAGS='-Wextra -Wno-unused-parameter -fanalyzer' rc
 
 $(OBJS): Makefile $(HDRS) config.h
 

@@ -149,7 +149,7 @@ static void b_cd(char **av) {
 	do {
 	    if (s != &nil && *s->w != '\0') {
 		t = strlen(*av) + strlen(s->w) + 2;
-		if (t > pathlen)
+		if (t > pathlen || path == NULL)
 		    path = nalloc(pathlen = t);
 		strcpy(path, s->w);
 		if (!streq(s->w, "/")) /* "//" is special to POSIX */
