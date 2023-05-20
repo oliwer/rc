@@ -131,6 +131,8 @@ extern void rc_error(char *s) {
 	redirq = NULL;
 	cond = FALSE; /* no longer inside conditional */
 	rc_raise(eError);
+	/* UNREACHED */
+	abort();
 }
 
 extern void sigint(int s) {
